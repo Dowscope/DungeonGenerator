@@ -9,17 +9,20 @@
 
 class Room{
 private:
-    int _x, _y;
-    int _doors;    // Door Locations in Binary.  Top MSB - 1000, Clockwise
+    int _x, _y, _w, _h;
 public:
-    Room(int x, int y);
+    Room(int x, int y, int w, int h);
     ~Room();
+    int getX() {return _x;} 
+    int getY() {return _y;}
+    int getW() {return _w;}
+    int getH() {return _h;}
 };
 
-Room::Room(int x, int y){
-    this->_x = x;
-    this->_y = y;
-    this->_doors = 0b1010;
+Room::Room(int x, int y, int w, int h):
+    _x(x), _y(y), _w(w), _h(h)
+{
+    
 }
 
 #endif

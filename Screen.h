@@ -18,29 +18,34 @@ class Screen
 private:
     int _screenWidth, _screenHeight;
     char* _title;
-    SDL_Window* mainWindow;
-    SDL_Renderer* mainRenderer;
+    SDL_Rect* _mainCamera;
+    SDL_Window* _mainWindow;
+    SDL_Renderer* _mainRenderer;
+    SDL_Surface* _mainSurface;
+    SDL_Surface* _groundSurface;
+    SDL_Surface* _playerSurface;
 
     bool _initialize();
 public:
-    Screen(int w, int h, char* aTitle);
+    Screen(int w, int h, char* aTitle, SDL_Rect* aCamera);
     ~Screen();
 
     bool didInitialize = false;
+
+    void initializeTmpSurface(int width, int height);
 
     void clear();
     void present();
     void terminate();
 
-    void renderStar(int x, int y);
+    void renderRoom(SDL_Rect room);
+    void renderWorldFloor(int width, int height);
+    void drawPlayer(int resolution);
 };
 
-Screen::Screen(int w, int h, char* aTitle)
+Screen::Screen(int w, int h, char* aTitle, SDL_Rect* aCamera):
+    _screenWidth(w), _screenHeight(h), _title(aTitle), _mainCamera(aCamera)
 {
-    this->_screenWidth = w;
-    this->_screenHeight = h;
-    this->_title = aTitle;
-
     didInitialize = _initialize();
 }
 
@@ -60,13 +65,13 @@ bool Screen::_initialize()
 
     // Create our game window
     std::cout << "Creating Window....";
-    mainWindow = SDL_CreateWindow(_title,
+    _mainWindow = SDL_CreateWindow(_title,
                                     SDL_WINDOWPOS_CENTERED,
                                     SDL_WINDOWPOS_CENTERED,
                                     _screenWidth,
                                     _screenHeight,
                                     0);
-    if (mainWindow == NULL) {
+    if (_mainWindow == NULL) {
         std::cout << "SCREEN_H: Window was not created" << std::endl;
         return false;
     }
@@ -74,36 +79,67 @@ bool Screen::_initialize()
 
     // Create our renderer
     std::cout << "Creating Renderer....";
-    mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
-    if (mainRenderer == NULL) {
+    _mainRenderer = SDL_CreateRenderer(_mainWindow, -1, SDL_RENDERER_SOFTWARE);
+    if (_mainRenderer == NULL) {
         std::cout << "SCREEN_H: Renderer was not created" << std::endl;
         return false;
     }
     std::cout << "OK!" << std::endl;
+
+    // Grab the screen surface
+    std::cout << "Grabbing Surface from Screen....";
+    _mainSurface = SDL_GetWindowSurface(_mainWindow);
+    std::cout << "OK!" << std::endl;
+
+    // Create Player Surface
+    std::cout << "Creating Player Surface....";
+    _groundSurface = SDL_CreateRGBSurface(0, _screenWidth, _screenHeight, 32, 0, 0, 0, 0);
+    std::cout << "OK!" << std::endl;
+
     return true;
+}
+
+// Function to init the tmp surface to draw to.
+void Screen::initializeTmpSurface(int width, int height){
+    std::cout << "Creating Temp Surface....";
+    _groundSurface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+    std::cout << "OK!" << std::endl;
 }
 
 // Function that will call the SDL function to clear the renderer
 void Screen::clear() {
-    SDL_SetRenderDrawColor(mainRenderer, 0, 0, 0, 255);
-    SDL_RenderClear(mainRenderer);
+    SDL_SetRenderDrawColor(_mainRenderer, 0, 0, 0, 255);
+    SDL_RenderClear(_mainRenderer);
 }
 
 // Function that will call the SDL function to present the renderer to the screen
 void Screen::present() {
-    SDL_RenderPresent(mainRenderer);
+    //SDL_RenderPresent(_mainRenderer);
+    SDL_BlitSurface(_groundSurface, _mainCamera, _mainSurface, NULL);
+    //SDL_BlitSurface(_playerSurface, NULL, _mainSurface, NULL);
+    SDL_UpdateWindowSurface(_mainWindow);
 }
 
 void Screen::terminate(){
-    SDL_DestroyRenderer(mainRenderer);
-    SDL_DestroyWindow(mainWindow);
+    SDL_FreeSurface(_groundSurface);
+    SDL_FreeSurface(_playerSurface);
+    SDL_DestroyRenderer(_mainRenderer);
+    SDL_DestroyWindow(_mainWindow);
     SDL_Quit();
 }
 
-void Screen::renderStar(int x, int y){
-    SDL_Rect r = {x,y,4,4};
-    SDL_SetRenderDrawColor(mainRenderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(mainRenderer, &r);
+void Screen::renderRoom(SDL_Rect room){
+    SDL_FillRect(_groundSurface, &room, SDL_MapRGB(_groundSurface->format, 255, 255, 255));
+}
+
+void Screen::renderWorldFloor(int width, int height){
+    SDL_Rect r = {0,0,width,height};
+    SDL_FillRect(_groundSurface, &r, SDL_MapRGB(_groundSurface->format, 0, 200, 0));
+}
+
+void Screen::drawPlayer(int resolution){
+    SDL_Rect r = {_screenWidth/2,_screenHeight/2,resolution,resolution};
+    SDL_FillRect(_playerSurface, &r, SDL_MapRGB(_playerSurface->format, 255, 0, 0));
 }
 
 #endif
