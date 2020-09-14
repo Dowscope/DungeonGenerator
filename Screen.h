@@ -23,7 +23,6 @@ private:
     SDL_Renderer* _mainRenderer;
     SDL_Surface* _mainSurface;
     SDL_Surface* _groundSurface;
-    SDL_Surface* _playerSurface;
 
     bool _initialize();
 public:
@@ -40,7 +39,8 @@ public:
 
     void renderRoom(SDL_Rect room);
     void renderWorldFloor(int width, int height);
-    void drawPlayer(int resolution);
+    void drawPlayer(int x, int y, int resolution);
+    void drawWall(int x1, int y1, int x2, int y2);
 };
 
 Screen::Screen(int w, int h, char* aTitle, SDL_Rect* aCamera):
@@ -91,11 +91,6 @@ bool Screen::_initialize()
     _mainSurface = SDL_GetWindowSurface(_mainWindow);
     std::cout << "OK!" << std::endl;
 
-    // Create Player Surface
-    std::cout << "Creating Player Surface....";
-    _groundSurface = SDL_CreateRGBSurface(0, _screenWidth, _screenHeight, 32, 0, 0, 0, 0);
-    std::cout << "OK!" << std::endl;
-
     return true;
 }
 
@@ -122,7 +117,6 @@ void Screen::present() {
 
 void Screen::terminate(){
     SDL_FreeSurface(_groundSurface);
-    SDL_FreeSurface(_playerSurface);
     SDL_DestroyRenderer(_mainRenderer);
     SDL_DestroyWindow(_mainWindow);
     SDL_Quit();
@@ -137,9 +131,14 @@ void Screen::renderWorldFloor(int width, int height){
     SDL_FillRect(_groundSurface, &r, SDL_MapRGB(_groundSurface->format, 0, 200, 0));
 }
 
-void Screen::drawPlayer(int resolution){
-    SDL_Rect r = {_screenWidth/2,_screenHeight/2,resolution,resolution};
-    SDL_FillRect(_playerSurface, &r, SDL_MapRGB(_playerSurface->format, 255, 0, 0));
+void Screen::drawPlayer(int x, int y, int resolution){
+    SDL_Rect r = {x, y,resolution,resolution};
+    SDL_FillRect(_groundSurface, &r, SDL_MapRGB(_groundSurface->format, 255, 0, 0));
+}
+
+void Screen::drawWall(int x, int y, int w, int h){
+    SDL_Rect r = {x, y, w, h};
+    SDL_FillRect(_groundSurface, &r, SDL_MapRGB(_groundSurface->format, 255, 255, 255));
 }
 
 #endif

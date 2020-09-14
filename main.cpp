@@ -10,10 +10,14 @@
 #include <time.h>
 #include "Screen.h"
 #include "World.h"
+#include "Player.h"
 
 // Declare Functions
 void update();
 void render();
+void renderWalls();
+void renderRooms();
+void updateCamera();
 
 // Declare the width and height that the window will be also the 
 // resolution of tile size.
@@ -29,10 +33,11 @@ const int WORLD_HEIGHT = 100;
 const int FPS = 60;
 
 // Declare the Screen object.
-Screen *screen;
+Screen* screen;
 
 // Declare GLOBAL game objects.
-World *world;
+World* world;
+Player* player;
 SDL_Rect mainCamera;
 int playerSpeed = 5;
 
@@ -60,6 +65,7 @@ int main(int argc, char const *argv[])
 
     /* Setup game objects  */  
     world = new World(WORLD_WIDTH, WORLD_HEIGHT);
+    player = new Player(0, 0);
     SDL_Event e;
 
     // Main Game Loop
@@ -75,16 +81,24 @@ int main(int argc, char const *argv[])
             }
             else if (e.type == SDL_KEYDOWN){
                 if (e.key.keysym.sym == SDLK_d){
-                    mainCamera.x += 1 * playerSpeed;
+                    int tmpX = player->getX() + 1 * playerSpeed;
+                    if (tmpX >= WORLD_WIDTH*RESOLUTION - 1 - RESOLUTION) {tmpX = WORLD_WIDTH*RESOLUTION - 1 - RESOLUTION;}
+                    player->setX(tmpX);
                 }
                 if (e.key.keysym.sym == SDLK_a){
-                    mainCamera.x -= 1 * playerSpeed;
+                    int tmpX = player->getX() - 1 * playerSpeed;
+                    if (tmpX < 0) {tmpX = 0;}
+                    player->setX(tmpX);
                 }
                 if (e.key.keysym.sym == SDLK_w){
-                    mainCamera.y -= 1 * playerSpeed;
+                    int tmpY = player->getY() - 1 * playerSpeed;
+                    if (tmpY < 0) {tmpY = 0;}
+                    player->setY(tmpY);
                 }
                 if (e.key.keysym.sym == SDLK_s){
-                    mainCamera.y += 1 * playerSpeed;
+                    int tmpY = player->getY() + 1 * playerSpeed;
+                    if (tmpY >= WORLD_HEIGHT*RESOLUTION - 1 - RESOLUTION) {tmpY = WORLD_HEIGHT*RESOLUTION - 1 - RESOLUTION;}
+                    player->setY(tmpY);
                 }
             }
             
@@ -111,18 +125,60 @@ int main(int argc, char const *argv[])
 }
 
 void update(){
-
+    updateCamera();
 }
 
 void render() {
-    screen->renderWorldFloor(world->getWorldWidth() * RESOLUTION, world->getWorldHeight() * RESOLUTION);
+    renderWalls();
+
+    //screen->renderWorldFloor(world->getWorldWidth() * RESOLUTION, world->getWorldHeight() * RESOLUTION);
+    renderRooms();
+
+    //screen->drawPlayer(player->getX(), player->getY(), RESOLUTION);
+}
+
+void renderWalls(){
+    for (int y = 0; y < WORLD_HEIGHT; y++)  
+    {
+        for (int x = 0; x < WORLD_WIDTH; x++)
+        {
+            Tile *t = world->getTileAt(x, y);
+            if (t){
+                int pX = t->getX();
+                int pY = t->getY();
+                // TOP
+                if (t->isWallAt(0))
+                    screen->drawWall(pX * RESOLUTION, pY * RESOLUTION, RESOLUTION, 2);
+                // RIGHT
+                if (t->isWallAt(1)) 
+                    screen->drawWall(pX * RESOLUTION + RESOLUTION, pY * RESOLUTION, 2, RESOLUTION);
+                // BOTTOM
+                if (t->isWallAt(2))
+                    screen->drawWall(pX * RESOLUTION, pY * RESOLUTION + RESOLUTION, RESOLUTION, 2);
+                // LEFT
+                if (t->isWallAt(3))
+                    screen->drawWall(pX * RESOLUTION, pY * RESOLUTION, 2, RESOLUTION);
+            }
+        }
+    }
+}
+
+void renderRooms(){
     std::vector<Room*> rooms = world->getRooms();
 
     for (int i = 0; i < rooms.size(); i++)
     {
         SDL_Rect r = {rooms[i]->getX() * RESOLUTION, rooms[i]->getY() * RESOLUTION, rooms[i]->getW() * RESOLUTION, rooms[i]->getH() * RESOLUTION};
-        screen->renderRoom(r);
+        //screen->renderRoom(r);
     }
+}
 
-    screen->drawPlayer(RESOLUTION);
+void updateCamera(){
+    mainCamera.x = player->getX() - mainCamera.w/2;
+    mainCamera.y = player->getY() - mainCamera.h/2;
+
+    if(mainCamera.x <= 0) { mainCamera.x = 0; }
+    if(mainCamera.y <= 0) { mainCamera.y = 0; }
+    if(mainCamera.x > WORLD_WIDTH*RESOLUTION-mainCamera.w) { mainCamera.x = WORLD_WIDTH*RESOLUTION-mainCamera.w; }
+    if(mainCamera.y > WORLD_HEIGHT*RESOLUTION-mainCamera.h) { mainCamera.y = WORLD_HEIGHT*RESOLUTION-mainCamera.h; }     
 }
