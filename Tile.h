@@ -14,6 +14,7 @@ private:
     bool _visited = false;
     bool _roomTile = false;
 public:
+    bool isCurrent = false;
     Tile(int x, int y);
     ~Tile();
     bool isWallAt(int location) {return _walls[location];}

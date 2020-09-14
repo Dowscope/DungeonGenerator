@@ -109,9 +109,8 @@ void Screen::clear() {
 
 // Function that will call the SDL function to present the renderer to the screen
 void Screen::present() {
-    //SDL_RenderPresent(_mainRenderer);
+    SDL_RenderPresent(_mainRenderer);
     SDL_BlitSurface(_groundSurface, _mainCamera, _mainSurface, NULL);
-    //SDL_BlitSurface(_playerSurface, NULL, _mainSurface, NULL);
     SDL_UpdateWindowSurface(_mainWindow);
 }
 

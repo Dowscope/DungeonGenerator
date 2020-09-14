@@ -13,14 +13,18 @@
 
 class World{
 private:
-    const int MAX_ROOMS = 20;
+    const int MAX_ROOMS = 10;
     const int MIN_ROOM_SIZE = 3;
     const int MAX_ROOM_SIZE = 10;
     int _width, _height;
     std::vector<Room*> _rooms;
     std::vector<Tile*> _tiles;
+    std::vector<Tile*> _mazeStack;
     void _initializeTiles();
     void _generateMap();
+    void _walkMaze();
+    Tile* _checkNeighbours(Tile *nb);
+    void _removeWalls(Tile* t, Tile* nb);
     bool _checkForOverlap(Room *r);
 public:
     World(int aWidth, int aHeight);
@@ -90,8 +94,87 @@ void World::_generateMap(){
 
     // Make Maze
     // Start at (0,0) for time being.
+    Tile* t = getTileAt(0,0);
+    t->Visited();
+    _mazeStack.push_back(t);
+
+    _walkMaze();
+}
+
+void World::_walkMaze(){
+    while(!_mazeStack.empty()){
+        Tile* t = _mazeStack.back();
+        _mazeStack.pop_back();
+
+        t->isCurrent = true;
+        Tile* next = _checkNeighbours(t);
+
+        if (next != nullptr){
+            _mazeStack.push_back(t);
+            _removeWalls(t, next);
+            next->Visited();
+            _mazeStack.push_back(next);
+        }
+    }
+}
+
+Tile* World::_checkNeighbours(Tile* t){
+    std::vector<Tile*> neighbours;
+    if (t->getY() > 0) {
+        Tile *next = getTileAt(t->getX(), t->getY() - 1);
+        if (next && !next->isVisited()){
+            neighbours.push_back(next);
+        }
+    }
+    if (t->getX() < _width - 1) {
+        Tile *next = getTileAt(t->getX() + 1, t->getY());
+        if (next && !next->isVisited()){
+            neighbours.push_back(next);
+        }
+    }
+    if (t->getY() < _height - 1) {
+        Tile *next = getTileAt(t->getX(), t->getY() + 1);
+        if (next && !next->isVisited()){
+            neighbours.push_back(next);
+        }
+    }
+    if (t->getX() > 0) {
+        Tile *next = getTileAt(t->getX() - 1, t->getY());
+        if (next && !next->isVisited()){
+            neighbours.push_back(next);
+        }
+    }
+    if (neighbours.empty()){ return nullptr;}
+
+    int random = rand() % neighbours.size();
+    return neighbours[random];
+}
+
+void World::_removeWalls(Tile* t, Tile* nb){
     
-     
+    int x = nb->getX() - t->getX();
+    int y = nb->getY() - t->getY();
+
+    if (x != 0){
+        if (x == 1){
+            t->setWallAt(1, false);
+            nb->setWallAt(3, false);
+        }
+        if (x == -1){
+            nb->setWallAt(1, false);
+            t->setWallAt(3, false);
+        }
+    }
+    else {
+        if (y == 1){
+            t->setWallAt(2, false);
+            nb->setWallAt(0, false);
+        }
+        if (y == -1){
+            nb->setWallAt(2, false);
+            t->setWallAt(0, false);
+        }
+    }
 }
 
 bool World::_checkForOverlap(Room *r){

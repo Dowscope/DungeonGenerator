@@ -23,11 +23,12 @@ void updateCamera();
 // resolution of tile size.
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 800;
-const int RESOLUTION = 32;
+const int WORLD_RESOLUTION = 32;
+const int PLAYER_RESOLUTION = 32;
 
 // Declare World Demensions
-const int WORLD_WIDTH = 100;
-const int WORLD_HEIGHT = 100;
+const int WORLD_WIDTH = 25;
+const int WORLD_HEIGHT = 25;
 
 // Frame Rate
 const int FPS = 60;
@@ -54,7 +55,7 @@ int main(int argc, char const *argv[])
 
     // Initialize the screen
     screen = new Screen(WINDOW_WIDTH, WINDOW_HEIGHT, title, &mainCamera);
-    screen->initializeTmpSurface(WORLD_WIDTH * RESOLUTION, WORLD_HEIGHT * RESOLUTION);
+    screen->initializeTmpSurface(WORLD_WIDTH * WORLD_RESOLUTION, WORLD_HEIGHT * WORLD_RESOLUTION);
 
     // Declare a switch for the main game loop
     bool isRunning = true;
@@ -82,7 +83,7 @@ int main(int argc, char const *argv[])
             else if (e.type == SDL_KEYDOWN){
                 if (e.key.keysym.sym == SDLK_d){
                     int tmpX = player->getX() + 1 * playerSpeed;
-                    if (tmpX >= WORLD_WIDTH*RESOLUTION - 1 - RESOLUTION) {tmpX = WORLD_WIDTH*RESOLUTION - 1 - RESOLUTION;}
+                    if (tmpX >= WORLD_WIDTH*WORLD_RESOLUTION - 1 - WORLD_RESOLUTION) {tmpX = WORLD_WIDTH*WORLD_RESOLUTION - 1 - WORLD_RESOLUTION;}
                     player->setX(tmpX);
                 }
                 if (e.key.keysym.sym == SDLK_a){
@@ -97,7 +98,7 @@ int main(int argc, char const *argv[])
                 }
                 if (e.key.keysym.sym == SDLK_s){
                     int tmpY = player->getY() + 1 * playerSpeed;
-                    if (tmpY >= WORLD_HEIGHT*RESOLUTION - 1 - RESOLUTION) {tmpY = WORLD_HEIGHT*RESOLUTION - 1 - RESOLUTION;}
+                    if (tmpY >= WORLD_HEIGHT*WORLD_RESOLUTION - 1 - WORLD_RESOLUTION) {tmpY = WORLD_HEIGHT*WORLD_RESOLUTION - 1 - WORLD_RESOLUTION;}
                     player->setY(tmpY);
                 }
             }
@@ -129,12 +130,10 @@ void update(){
 }
 
 void render() {
+    screen->renderWorldFloor(world->getWorldWidth() * WORLD_RESOLUTION, world->getWorldHeight() * WORLD_RESOLUTION);
     renderWalls();
-
-    //screen->renderWorldFloor(world->getWorldWidth() * RESOLUTION, world->getWorldHeight() * RESOLUTION);
     renderRooms();
-
-    //screen->drawPlayer(player->getX(), player->getY(), RESOLUTION);
+    screen->drawPlayer(player->getX(), player->getY(), PLAYER_RESOLUTION);
 }
 
 void renderWalls(){
@@ -148,16 +147,16 @@ void renderWalls(){
                 int pY = t->getY();
                 // TOP
                 if (t->isWallAt(0))
-                    screen->drawWall(pX * RESOLUTION, pY * RESOLUTION, RESOLUTION, 2);
+                    screen->drawWall(pX * WORLD_RESOLUTION, pY * WORLD_RESOLUTION, WORLD_RESOLUTION, 2);
                 // RIGHT
                 if (t->isWallAt(1)) 
-                    screen->drawWall(pX * RESOLUTION + RESOLUTION, pY * RESOLUTION, 2, RESOLUTION);
+                    screen->drawWall(pX * WORLD_RESOLUTION + WORLD_RESOLUTION, pY * WORLD_RESOLUTION, 2, WORLD_RESOLUTION);
                 // BOTTOM
                 if (t->isWallAt(2))
-                    screen->drawWall(pX * RESOLUTION, pY * RESOLUTION + RESOLUTION, RESOLUTION, 2);
+                    screen->drawWall(pX * WORLD_RESOLUTION, pY * WORLD_RESOLUTION + WORLD_RESOLUTION, WORLD_RESOLUTION, 2);
                 // LEFT
                 if (t->isWallAt(3))
-                    screen->drawWall(pX * RESOLUTION, pY * RESOLUTION, 2, RESOLUTION);
+                    screen->drawWall(pX * WORLD_RESOLUTION, pY * WORLD_RESOLUTION, 2, WORLD_RESOLUTION);
             }
         }
     }
@@ -168,7 +167,7 @@ void renderRooms(){
 
     for (int i = 0; i < rooms.size(); i++)
     {
-        SDL_Rect r = {rooms[i]->getX() * RESOLUTION, rooms[i]->getY() * RESOLUTION, rooms[i]->getW() * RESOLUTION, rooms[i]->getH() * RESOLUTION};
+        SDL_Rect r = {rooms[i]->getX() * WORLD_RESOLUTION, rooms[i]->getY() * WORLD_RESOLUTION, rooms[i]->getW() * WORLD_RESOLUTION, rooms[i]->getH() * WORLD_RESOLUTION};
         //screen->renderRoom(r);
     }
 }
@@ -179,6 +178,6 @@ void updateCamera(){
 
     if(mainCamera.x <= 0) { mainCamera.x = 0; }
     if(mainCamera.y <= 0) { mainCamera.y = 0; }
-    if(mainCamera.x > WORLD_WIDTH*RESOLUTION-mainCamera.w) { mainCamera.x = WORLD_WIDTH*RESOLUTION-mainCamera.w; }
-    if(mainCamera.y > WORLD_HEIGHT*RESOLUTION-mainCamera.h) { mainCamera.y = WORLD_HEIGHT*RESOLUTION-mainCamera.h; }     
+    if(mainCamera.x > WORLD_WIDTH*WORLD_RESOLUTION-mainCamera.w) { mainCamera.x = WORLD_WIDTH*WORLD_RESOLUTION-mainCamera.w; }
+    if(mainCamera.y > WORLD_HEIGHT*WORLD_RESOLUTION-mainCamera.h) { mainCamera.y = WORLD_HEIGHT*WORLD_RESOLUTION-mainCamera.h; }     
 }
