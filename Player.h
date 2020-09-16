@@ -19,10 +19,4 @@ public:
     void setY(int newY) {_y = newY;}
 };
 
-Player::Player(int x, int y):
-    _x(x), _y(y)
-{
-    
-}
-
 #endif
