@@ -10,11 +10,11 @@
 #include <iostream>
 
 struct Vector2D{
-    float x;
-    float y;
+    int x;
+    int y;
 
     Vector2D();
-    Vector2D(float x, float y);
+    Vector2D(int x, int y);
 
     friend std::ostream& operator<<(std::ostream& stream, const Vector2D& vec);
 };

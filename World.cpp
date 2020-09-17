@@ -33,6 +33,10 @@ void World::_generateMap(){
         if (y >= _height - h) { y = y - h; }
 
         Room *r = new Room(x, y, w, h);
+        r->generateDoor();
+        Vector2D door = r->doorLocation;
+        std::cout << door << std::endl;
+
         if ( !_checkForOverlap(r)){
             _rooms.push_back(r);
 
@@ -42,11 +46,39 @@ void World::_generateMap(){
                 {
                     Tile *t = getTileAt(col, row);
                     t->resetWalls(false);
+                    bool isDoor = false;
+                    if (door.x == col && door.y == row){
+                        isDoor = true;
+                    }
 
-                    if (row == 0){ t->setWallAt(0, true); }
-                    if (col == 0){ t->setWallAt(3, true); }
-                    if (row == y + h - 1){ t->setWallAt(2, true);}
-                    if (col == x + w - 1){ t->setWallAt(1, true);}
+                    if (row == y && !isDoor){ 
+                        t->setWallAt(0, true);
+                        if ( y > 0 && col != x){
+                            Tile * top = getTileAt(x, y - 1);
+                            _removeWalls(t, top);
+                        }
+                    }
+                    if (col == x && !isDoor){ 
+                        t->setWallAt(3, true); 
+                        if ( x > 0 ){
+                            Tile * left = getTileAt(x - 1, y);
+                            _removeWalls(t, left);
+                        }
+                    }
+                    if (row == y + h - 1 && !isDoor){ 
+                        t->setWallAt(2, true);
+                        if ( y < y + h - 1 ){
+                            Tile * bottom = getTileAt(x, y + 1);
+                            _removeWalls(t, bottom);
+                        }
+                    }
+                    if (col == x + w - 1 && !isDoor){ 
+                        t->setWallAt(1, true);
+                        if ( x < x + w - 1 ){
+                            Tile * right = getTileAt(x + 1, y);
+                            _removeWalls(t, right);
+                        }
+                    }
 
                     t->Visited();
                     t->makeRoomTile();
@@ -149,10 +181,10 @@ bool World::_checkForOverlap(Room *r){
 
     for (int i = 0; i < _rooms.size(); i++){
         Room *room = _rooms[i];
-        if (    r->getX() + r->getW() < room->getX() || 
-                r->getY() + r->getH() < room->getY() || 
-                r->getX() > room->getX() + room->getW() ||
-                r->getY() > room->getY() + room->getH() )
+        if (    r->x + r->w < room->x || 
+                r->y + r->h < room->y || 
+                r->x > room->x + room->w ||
+                r->y > room->y + room->h )
         {
 
         }

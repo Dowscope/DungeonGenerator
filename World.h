@@ -11,12 +11,13 @@
 #include <iostream>
 #include "Room.h"
 #include "Tile.h"
+#include "Vector2D.h"
 
 class World{
 private:
-    const int MAX_ROOMS = 10;
+    const int MAX_ROOMS = 100;
     const int MIN_ROOM_SIZE = 3;
-    const int MAX_ROOM_SIZE = 10;
+    const int MAX_ROOM_SIZE = 7;
     int _width, _height;
     std::vector<Room*> _rooms;
     std::vector<Tile*> _tiles;

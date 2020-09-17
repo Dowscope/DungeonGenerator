@@ -79,7 +79,7 @@ void Screen::terminate(){
 }
 
 void Screen::renderRoom(SDL_Rect room){
-    SDL_FillRect(_groundSurface, &room, SDL_MapRGB(_groundSurface->format, 255, 255, 255));
+    SDL_FillRect(_groundSurface, &room, SDL_MapRGBA(_groundSurface->format, 0, 0, 25, 1));
 }
 
 void Screen::renderWorldFloor(int width, int height){

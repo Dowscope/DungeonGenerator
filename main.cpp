@@ -23,7 +23,7 @@ void updateCamera();
 // resolution of tile size.
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 800;
-const int WORLD_RESOLUTION = 64;
+const int WORLD_RESOLUTION = 32;
 const int PLAYER_RESOLUTION = 32;
 
 // Declare World Demensions
@@ -132,7 +132,7 @@ void update(){
 void render() {
     screen->renderWorldFloor(world->getWorldWidth() * WORLD_RESOLUTION, world->getWorldHeight() * WORLD_RESOLUTION);
     renderWalls();
-    renderRooms();
+    //renderRooms();
     screen->drawPlayer(player->getX(), player->getY(), PLAYER_RESOLUTION);
 }
 
@@ -167,8 +167,10 @@ void renderRooms(){
 
     for (int i = 0; i < rooms.size(); i++)
     {
-        SDL_Rect r = {rooms[i]->getX() * WORLD_RESOLUTION, rooms[i]->getY() * WORLD_RESOLUTION, rooms[i]->getW() * WORLD_RESOLUTION, rooms[i]->getH() * WORLD_RESOLUTION};
+        //SDL_Rect r = {rooms[i]->x * WORLD_RESOLUTION, rooms[i]->y * WORLD_RESOLUTION, rooms[i]->w * WORLD_RESOLUTION, rooms[i]->h * WORLD_RESOLUTION};
         //screen->renderRoom(r);
+        Room* r = rooms[i];
+        screen->drawWall(r->doorLocation.x * WORLD_RESOLUTION, r->doorLocation.y * WORLD_RESOLUTION, WORLD_RESOLUTION, WORLD_RESOLUTION);
     }
 }
 

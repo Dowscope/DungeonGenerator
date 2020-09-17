@@ -8,18 +8,15 @@
 #define ROOM_H
 
 #include <random>
+#include "Vector2D.h"
 
-class Room{
-private:
-    int _x, _y, _w, _h;
-    void _generateDoors(const int doors);
-public:
+struct Room{
+    int x, y, w, h;
+    Vector2D doorLocation;
     Room(int x, int y, int w, int h);
     ~Room();
-    int getX() {return _x;} 
-    int getY() {return _y;}
-    int getW() {return _w;}
-    int getH() {return _h;}
+
+    void generateDoor();
 };
 
 #endif

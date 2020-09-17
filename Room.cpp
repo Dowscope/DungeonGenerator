@@ -1,27 +1,30 @@
 #include "Room.h"
 
 Room::Room(int x, int y, int w, int h):
-    _x(x), _y(y), _w(w), _h(h)
-{
+    x(x), y(y), w(w), h(h)
+{ 
     
 }
 
-void Room::_generateDoors(int doors){
+void Room::generateDoor(){
+
     int direction = rand() % 4;
-    int location;
+    int randomX = x + rand() % w;
+    int randomY = y + rand() % h;
+
     switch (direction)
     {
     case 0:
-        location = rand() % _w;
+        doorLocation = {randomX, y};
         break;
     case 1:
-        location = rand() % _h;
+        doorLocation = {x+w-1, randomY};
         break;
     case 2:
-        location = rand() % _w;
+        doorLocation = {randomX, y+h-1};
         break;
     default:
-        location = rand() % _h;
+        doorLocation = {x, randomY};
         break;
     }
 }
