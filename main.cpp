@@ -23,7 +23,7 @@ void updateCamera();
 // resolution of tile size.
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 800;
-const int WORLD_RESOLUTION = 32;
+const int WORLD_RESOLUTION = 64;
 const int PLAYER_RESOLUTION = 32;
 
 // Declare World Demensions
@@ -141,8 +141,8 @@ void renderWalls(){
     {
         for (int x = 0; x < WORLD_WIDTH; x++)
         {
-            Tile *t = world->getTileAt(x, y);
-            if (t){
+            Tile* t = world->getTileAt(x, y);
+            if (&t){
                 int pX = t->getX();
                 int pY = t->getY();
                 // TOP

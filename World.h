@@ -8,6 +8,7 @@
 #define WORLD_H
 
 #include <vector>
+#include <iostream>
 #include "Room.h"
 #include "Tile.h"
 

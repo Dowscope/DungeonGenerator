@@ -36,7 +36,7 @@ bool Screen::_initialize()
 
     // Create our renderer
     std::cout << "Creating Renderer....";
-    _mainRenderer = SDL_CreateRenderer(_mainWindow, -1, SDL_RENDERER_SOFTWARE);
+    _mainRenderer = SDL_CreateRenderer(_mainWindow, -1, SDL_RENDERER_ACCELERATED);
     if (_mainRenderer == NULL) {
         std::cout << "SCREEN_H: Renderer was not created" << std::endl;
         return false;
