@@ -6,8 +6,8 @@
 #include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 #include "Screen.h"
 #include "World.h"
 #include "Player.h"
@@ -21,10 +21,10 @@ void updateCamera();
 
 // Declare the width and height that the window will be also the 
 // resolution of tile size.
-const int WINDOW_WIDTH = 1000;
-const int WINDOW_HEIGHT = 800;
-const int WORLD_RESOLUTION = 32;
-const int PLAYER_RESOLUTION = 32;
+const int WINDOW_WIDTH = 1920;
+const int WINDOW_HEIGHT = 1080;
+const int WORLD_RESOLUTION = 512;
+const int PLAYER_RESOLUTION = 64;
 
 // Declare World Demensions
 const int WORLD_WIDTH = 25;
@@ -45,7 +45,8 @@ int playerSpeed = 5;
 int main(int argc, char const *argv[])
 {
     // Initialize the randomizer
-    srand(time(NULL));
+    srand((unsigned int)time(0));
+    //srand(1);
 
     // Set the title of the project
     char title[] = "Dungeon Generator";

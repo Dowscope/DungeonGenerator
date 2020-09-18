@@ -84,7 +84,7 @@ void Screen::renderRoom(SDL_Rect room){
 
 void Screen::renderWorldFloor(int width, int height){
     SDL_Rect r = {0,0,width,height};
-    SDL_FillRect(_groundSurface, &r, SDL_MapRGB(_groundSurface->format, 0, 200, 0));
+    SDL_FillRect(_groundSurface, &r, SDL_MapRGB(_groundSurface->format, 0, 0, 0));
 }
 
 void Screen::drawPlayer(int x, int y, int resolution){

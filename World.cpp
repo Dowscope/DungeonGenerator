@@ -35,7 +35,6 @@ void World::_generateMap(){
         Room *r = new Room(x, y, w, h);
         r->generateDoor();
         Vector2D door = r->doorLocation;
-        std::cout << door << std::endl;
 
         if ( !_checkForOverlap(r)){
             _rooms.push_back(r);
@@ -51,31 +50,31 @@ void World::_generateMap(){
                         isDoor = true;
                     }
 
-                    if (row == y && !isDoor){ 
+                    if (row == y){ 
                         t->setWallAt(0, true);
-                        if ( y > 0 && col != x){
-                            Tile * top = getTileAt(x, y - 1);
+                        if ( y > 0 && isDoor && x != col && col != x + w -1){
+                            Tile * top = getTileAt(col, row - 1);
                             _removeWalls(t, top);
                         }
                     }
-                    if (col == x && !isDoor){ 
+                    if (col == x){ 
                         t->setWallAt(3, true); 
-                        if ( x > 0 ){
-                            Tile * left = getTileAt(x - 1, y);
+                        if ( x > 0 && isDoor){
+                            Tile * left = getTileAt(col - 1, row);
                             _removeWalls(t, left);
                         }
                     }
-                    if (row == y + h - 1 && !isDoor){ 
+                    if (row == y + h - 1){ 
                         t->setWallAt(2, true);
-                        if ( y < y + h - 1 ){
-                            Tile * bottom = getTileAt(x, y + 1);
+                        if ( y < y + h - 1 && isDoor && col != x && col != x + w -1){
+                            Tile * bottom = getTileAt(col, row + 1);
                             _removeWalls(t, bottom);
                         }
                     }
-                    if (col == x + w - 1 && !isDoor){ 
+                    if (col == x + w - 1){ 
                         t->setWallAt(1, true);
-                        if ( x < x + w - 1 ){
-                            Tile * right = getTileAt(x + 1, y);
+                        if ( x < x + w - 1 && isDoor ){
+                            Tile * right = getTileAt(col + 1, row);
                             _removeWalls(t, right);
                         }
                     }
